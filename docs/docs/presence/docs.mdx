@@ -1,0 +1,211 @@
+# API
+
+## createPresence
+
+创建 Presence 实例。
+
+- 类型
+
+```ts
+function createPresence(options: PresenceOptions): Promise<IPresence>;
+```
+
+- 详细信息
+
+参数为连接信息。
+
+- 示例
+
+```ts
+import { createPresence } from '@yomo/presence';
+
+const presence = await createPresence({
+  appId: 'your-app-id',
+  appKey: 'your-app-key',
+});
+```
+
+## presence.onReady()
+
+- 类型
+
+```ts
+interface IPresence {
+  onReady(callbackFn: (presence: IPresence) => void): void;
+}
+```
+
+- 详细信息
+
+当 Presence 实例连接到服务端后，会触发 onReady 事件。
+
+参数为一个回调函数，回调函数的默认参数是连接后的 Presence 实例。
+
+- 示例
+
+```ts
+presence.onReady(presence => {
+  console.log('Presence is ready.');
+});
+```
+
+## presence.joinChannel()
+
+- 类型
+
+```ts
+interface IPresence {
+  joinChannel: (channelId: string, metadata: Metadata) => IChannel;
+}
+```
+
+- 详细信息
+
+加入 channel。
+
+参数为 channel ID 和当前用户的状态，状态参数为可选参数。
+
+## presence.leaveChannel()
+
+- 类型
+
+```ts
+interface IPresence {
+  leaveChannel: (channelId: string) => void;
+}
+```
+
+- 详细信息
+
+离开 channel。
+
+参数为 channel ID。
+
+## channel.subscribePeers()
+
+- 类型
+
+```ts
+interface IChannel {
+  subscribePeers: (callbackFn: (peers: Peer[]) => any) => PeersUnsubscribe;
+}
+```
+
+- 详细信息
+
+订阅 channel 中的 peers 上下线、状态变化。每当有 peer 上线、下线、状态变化时，都会触发回调函数。
+
+参数为一个回调函数，回调函数的默认参数是当前 channel 中的所有 peers。
+
+返回值为一个取消订阅函数。
+
+:::caution
+
+注意：presence 采用 chirp 的方式进行通信，即当有 peer 上线、下线、状态变化时，会触发回调函数，这意味着当一个 peer 上线时，可能会在短时间内触发多次回调函数。
+
+:::
+
+- 示例
+
+```ts
+const unsubscribe = channel.subscribePeers(peers => {
+  console.log('peers changed', peers);
+});
+
+// 取消订阅
+unsubscribe();
+```
+
+## channel.subscribe()
+
+- 类型
+
+```ts
+interface IChannel {
+  subscribe<T>(
+    eventName: string,
+    callbackFn: ChannelEventSubscribeCallbackFn<T>
+  ): void;
+}
+```
+
+- 详细信息
+
+订阅 channel 中的事件。每当有其他 peer 广播该类型事件时，都会触发回调函数。
+
+参数为事件名称和一个回调函数，回调函数的默认参数是事件的数据。
+
+返回值为一个取消订阅函数。
+
+- 示例
+
+```ts
+const unsubscribe = channel.subscribe('message', data => {
+  console.log('message', data);
+});
+
+// 取消订阅
+unsubscribe();
+```
+
+## channel.broadcast()
+
+- 类型
+
+```ts
+interface IChannel {
+  broadcast<T>(eventName: string, payload: T): void;
+}
+```
+
+- 详细信息
+
+向 channel 中的其他 peer 广播事件。
+
+参数为事件名称和事件数据。
+
+- 示例
+
+```ts
+channel.broadcast('message', {
+  text: 'hello',
+});
+```
+
+## channel.updateMetadata()
+
+- 类型
+
+```ts
+interface IChannel {
+  updateMetadata: (metadata: Metadata) => void;
+}
+```
+
+- 详细信息
+
+更新当前用户的状态。
+
+参数为状态数据。
+
+- 示例
+
+```ts
+channel.updateMetadata({
+  text: 'hello',
+});
+```
+
+## channel.leave()
+
+- 类型
+
+```ts
+interface IChannel {
+  leave: () => void;
+}
+```
+
+- 详细信息
+
+离开 channel。

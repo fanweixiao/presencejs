@@ -1,0 +1,112 @@
+# tutorials
+
+## 开始使用 Presence
+
+### 创建应用
+
+使用 Presence，首先需要在控制台创建一个应用，并申请一个 App Key、App Secrit 或者 Public Key，然后在客户端初始化 SDK。
+
+### 安装
+
+在终端运行如下命令：
+
+```bash
+npm i @yomo/webtransport-polyfill @yomo/presence
+```
+
+### 创建客户端
+
+通过 `createClient` 创建一个客户端，需要传入 `publicKey` 或 `appKey` 和 `appSecret`。
+
+```ts
+import { createPresence } from '@yomo/presence';
+
+const presence = createPresence({
+  publicKey: 'your public key',
+  // or
+  // appKey: 'your app key',
+  // appSecret: 'your app secret',
+});
+```
+
+### 连接到服务端
+
+Presence 实例创建成功后，会自动连接到服务端。由于 Presence 的连接行为是异步的，所以需要等待连接成功后才能进行后续操作。
+
+等待连接成功有两种方式。
+
+1. Presence 实例本身是一个 Promise 对象，可以通过 `await` 等待连接成功。
+
+```ts
+await presence;
+```
+
+2. Presence 实例上有一个 `onReady` 的方法，可以在这个方法中传入回调函数，回调函数的参数就是连接后的 presence 实例。
+
+```ts
+presence.onReady(instance => {
+  console.log('presence is ready');
+});
+```
+
+### 加入 channel
+
+通过 `joinChannel` 方法加入一个 channel，需要传入 channel 的 id。
+
+`joinChannel` 方法的第二个参数作为初始化状态，这些状态都会存储在客户端，服务端始终都是无状态的，状态参数是可选的。
+
+```ts
+presence.joinChannel('channel id', {
+  name: 'yomo',
+  age: 18,
+});
+```
+
+### 与 channel 中的其他用户交互
+
+加入 channel 后，可以通过 `channel.subscribe` 方法监听 channel 中的其他用户发送的事件。
+
+```ts
+channel.subscribe('event name', data => {
+  console.log(data);
+});
+```
+
+可以通过 `channel.broadcast` 方法向 channel 中的其他用户发送事件。
+
+```ts
+channel.broadcast('event name', data);
+```
+
+### 订阅其他用户的状态
+
+可以通过 `channel.subscribePeers` 方法监听其他用户的状态变化。
+
+每当其他用户的状态发生变化时，都会触发该回调函数。
+
+```ts
+channel.subscribePeers(peers => {
+  console.log(peers);
+});
+```
+
+### 更新自身状态
+
+可以通过 `channel.updateMetadata` 方法更新自身状态。
+
+```ts
+channel.updateMetadata({
+  name: 'yomo',
+  age: 18,
+});
+```
+
+更新自身状态后，会触发其他用户通过 `channel.subscribePeers` 方法中注册的回调函数。
+
+### 离开 channel
+
+可以通过 `channel.leave` 方法离开 channel。
+
+```ts
+channel.leave();
+```

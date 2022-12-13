@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script src="../../packages/webtransport-polyfill/dist/index.global.js"></script>
+
+    <script>
+      async function init() {
+        const transport = new WebTransport('ws://localhost:8080/');
+
+        transport.closed
+          .then(() => {
+            console.log('connection closed');
+          })
+          .catch(error => {
+            console.log('connection error: ' + error);
+          });
+
+        await transport.ready;
+
+        const writer = transport.datagrams.writable.getWriter();
+        // ABC
+        const data1 = new Uint8Array([65, 66, 67]);
+        // DEF
+        const data2 = new Uint8Array([68, 69, 70]);
+        writer.write(data1);
+        writer.write(data2);
+
+        const reader = transport.datagrams.readable.getReader();
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) {
+            break;
+          }
+          console.log('data: ', value);
+        }
+      }
+
+      init();
+    </script>
+  </body>
+</html>

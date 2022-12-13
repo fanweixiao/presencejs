@@ -1,0 +1,157 @@
+# API
+
+## createChannelContext
+
+创建 ChannelProvider 组件和相关 Hooks。
+
+- 类型
+
+```ts
+interface CreateChannelContext {
+  (presence: Promise<IPresence>): {
+    ChannelProvider: React.FC<ChannelProviderProps>;
+    Suspense: React.FC<any>;
+    usePeers: () => any[];
+    useMyState: () => any;
+    useUpdateMyState: Function;
+  };
+}
+```
+
+- 详细信息
+
+参数为 Presence 实例。
+
+- 示例
+
+```ts
+import { createPresence } from '@yomo/presence';
+import { createChannelContext } from '@yomo/presence-react';
+
+const presence = await createPresence({
+  appId: 'your-app-id',
+  appKey: 'your-app-key',
+});
+
+export const {
+  ChannelProvider,
+  usePeers,
+  useMyState,
+  useUpdateMyState,
+} = createChannelContext(presence);
+```
+
+## ChannelProvider
+
+ChannelProvider 组件，用于提供 Presence 实例。
+
+- 类型
+
+```ts
+interface ChannelProviderProps {
+  id: string;
+  initialState?: any;
+  children: React.ReactNode;
+}
+```
+
+- 详细信息
+
+id 为 channel ID，initialState 为初始状态。
+
+- 示例
+
+```tsx
+import React from 'react';
+import { ChannelProvider } from './presence.config.js';
+
+export default function App() {
+  return (
+    <ChannelProvider id="channel-id" initialState={{ count: 0 }}>
+      <div>App</div>
+    </ChannelProvider>
+  );
+}
+```
+
+## usePeers
+
+获取当前 channel 的所有用户。
+
+- 类型
+
+```ts
+interface UsePeers {
+  (): any[];
+}
+```
+
+- 示例
+
+```tsx
+import React from 'react';
+import { usePeers } from './presence.config.js';
+
+export default function Peers() {
+  const peers = usePeers();
+  return <div>{peers.length}</div>;
+}
+```
+
+## useMyState
+
+获取当前用户的状态。
+
+- 类型
+
+```ts
+interface UseMyState {
+  (): any;
+}
+```
+
+- 示例
+
+```tsx
+import React from 'react';
+import { useMyState } from './presence.config.js';
+
+export default function MyState() {
+  const state = useMyState();
+  return <div>{state.count}</div>;
+}
+```
+
+## useUpdateMyState
+
+更新当前用户的状态。
+
+- 类型
+
+```ts
+interface UseUpdateMyState {
+  (): Function;
+}
+```
+
+- 示例
+
+```tsx
+import React from 'react';
+import { useUpdateMyState } from './presence.config.js';
+
+export default function UpdateMyState() {
+  const updateMyState = useUpdateMyState();
+  return (
+    <button
+      onClick={() => {
+        updateMyState(state => {
+          return { count: state.count + 1 };
+        });
+      }}
+    >
+      Update
+    </button>
+  );
+}
+```

@@ -1,59 +1,68 @@
 {
-  "version": "1.0.0-alpha.4",
-  "description": "@yomo/presencejs ⚡️ made realtime web applications edge-aware by YoMo",
+  "private": true,
+  "name": "yomo",
+  "version": "next",
+  "description": "@yomo/presence⚡️ made realtime web applications edge-aware by YoMo",
   "keywords": [
     "yomo",
     "realtime",
+    "real-time web",
+    "presence",
     "presencejs",
     "metaverse",
+    "websocket",
     "webtransport"
   ],
   "license": "MIT",
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
-  "files": [
-    "dist",
-    "src"
-  ],
   "engines": {
     "node": ">=10"
   },
-  "scripts": {
-    "start": "tsdx watch",
-    "build": "tsdx build",
-    "test": "tsdx test",
-    "lint": "tsdx lint",
-    "prepare": "tsdx build"
-  },
+  "packageManager": "pnpm@7.1.3",
   "np": {
     "yarn": false,
     "contents": "dist"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "tsdx lint"
+  "author": "yomo",
+  "contributors": [
+    {
+      "name": "luzhenqian",
+      "email": "luzhenqian98@gmail.com",
+      "url": "https://www.luzhenqian.com"
+    },
+    {
+      "name": "osdodo"
     }
-  },
-  "prettier": {
-    "printWidth": 80,
-    "tabWidth": 4,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "es5"
-  },
-  "name": "@yomo/presencejs",
-  "author": "osdodo",
+  ],
   "module": "dist/presencejs.esm.js",
   "devDependencies": {
+    "@babel/core": "^7.18.13",
+    "@babel/plugin-transform-runtime": "^7.19.1",
+    "@babel/preset-env": "^7.19.4",
+    "@babel/preset-react": "^7.18.6",
+    "@msgpack/msgpack": "^2.8.0",
+    "@rollup/plugin-babel": "^5.3.1",
+    "@rollup/plugin-replace": "^5.0.1",
+    "@rollup/plugin-typescript": "^8.4.0",
+    "@swc/core": "^1.2.233",
+    "@types/jest": "^27.5.1",
     "@types/node-fetch": "^2.5.12",
+    "@types/react": "^18.0.9",
+    "@web/dev-server-esbuild": "^0.3.3",
+    "acorn-jsx": "^5.3.2",
+    "babel": "^6.23.0",
+    "babel-jest": "^29.0.2",
     "husky": "^7.0.4",
+    "jsdom": "^20.0.0",
     "node-fetch": "^2.6.6",
+    "rollup": "^2.36.2",
+    "rollup-plugin-dts": "^5.0.0",
+    "tailwindcss": "^3.2.4",
     "tsdx": "^0.14.1",
     "tslib": "^2.3.1",
-    "typescript": "^4.5.2"
-  },
-  "dependencies": {
-    "rxjs": "^6.6.6"
+    "tsup": "^6.2.2",
+    "typescript": "^4.5.2",
+    "vite": "^3.2.4",
+    "web-streams-polyfill": "^3.2.1"
   },
   "repository": {
     "type": "git",

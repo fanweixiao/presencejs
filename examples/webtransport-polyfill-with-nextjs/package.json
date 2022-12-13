@@ -1,0 +1,27 @@
+{
+  "name": "webtransport-polyfill-with-nextjs",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "nodemon ./server.js & next dev",
+    "dev:serve": "nodemon ./server.js",
+    "dev:fe": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.5",
+    "express-ws": "^5.0.2",
+    "next": "12.2.5",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-use-websocket": "^4.2.0",
+    "ws": "^8.8.1"
+  },
+  "devDependencies": {
+    "eslint": "8.22.0",
+    "eslint-config-next": "12.2.5",
+    "express": "^4.18.1"
+  }
+}

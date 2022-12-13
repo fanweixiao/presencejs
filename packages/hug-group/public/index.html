@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>rollup-starter-app</title>
+    <script>
+      var module = {};
+    </script>
+    <script src="./wtp.js"></script>
+    <style>
+      body {
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        color: #333;
+        font-weight: 300;
+      }
+    </style>
+  </head>
+  <body>
+    <hug-group></hug-group>
+    <script type="module" src="bundle.js"></script>
+    <script>
+      const hugGroup = document.querySelector('hug-group');
+      const id = (Math.random() * 10).toString();
+      hugGroup.setAttribute('id', id);
+      hugGroup.setAttribute('avatar', `https://robohash.org/${id}`);
+      location.hash = id;
+    </script>
+  </body>
+</html>

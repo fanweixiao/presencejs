@@ -1,0 +1,11 @@
+{
+  "include": [
+    "src",
+    "types"
+  ],
+  "compilerOptions": {
+    "target": "es6",
+    "experimentalDecorators": true,
+    "moduleResolution": "node"
+  }
+}

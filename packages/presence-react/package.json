@@ -1,0 +1,72 @@
+{
+  "name": "@yomo/presence-react",
+  "version": "1.0.0",
+  "description": "@yomo/presence-react ⚡️ made realtime web applications edge-aware by YoMo",
+  "keywords": [
+    "yomo",
+    "realtime",
+    "real-time web",
+    "presence",
+    "presencejs",
+    "metaverse",
+    "websocket",
+    "webtransport",
+    "react"
+  ],
+  "license": "MIT",
+  "module": "dist/presence-react.esm.js",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test",
+    "lint": "tsdx lint"
+  },
+  "np": {
+    "yarn": false,
+    "contents": "dist"
+  },
+  "author": "yomo",
+  "contributors": [
+    {
+      "name": "luzhenqian",
+      "email": "luzhenqian98@gmail.com",
+      "url": "https://www.luzhenqian.com"
+    }
+  ],
+  "devDependencies": {
+    "@types/node-fetch": "^2.5.12",
+    "@types/react": "^18.0.9",
+    "husky": "^7.0.4",
+    "node-fetch": "^2.6.6",
+    "react": "^18.1.0",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.3.1",
+    "typescript": "^4.5.2"
+  },
+  "dependencies": {
+    "@yomo/presence": "^2.0.0",
+    "nanoid": "^3.3.4",
+    "presence": "^0.2.3",
+    "rxjs": "^6.6.6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yomorun/presencejs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yomorun/presencejs/issues"
+  },
+  "homepage": "https://github.com/yomorun/presencejs#readme",
+  "peerDependencies": {
+    "react": "^18.1.0"
+  }
+}

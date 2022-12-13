@@ -1,0 +1,50 @@
+---
+sidebar_position: 2
+---
+# tutorials
+
+## 开始使用 WebTransport Polyfill
+
+WebTransport Polyfill 的工作原理是使用 WebSocket 模拟 WebTransport 的 API。
+
+在不支持 WebTransport 的环境中（比如 Firefox），同样可以使用 WebTransport Polyfill 提供的 API。
+
+如果在支持 WebTransport 的环境中，WebTransport Polyfill 会自动使用原生的 WebTransport API。
+
+## 安装
+
+### 使用 npm
+
+1. 安装
+
+在终端运行如下命令：
+
+```bash
+npm i @yomo/webtransport-polyfill
+```
+
+2. 导入
+
+在使用 WebTransport 之前，需要导入 WebTransport Polyfill：
+
+```js
+import '@yomo/webtransport-polyfill';
+
+new WebTransport('https://example.com');
+```
+
+### 使用 CDN
+
+如果你想在浏览器中直接使用 WebTransport Polyfill，不经过任何构建步骤。那么可以使用 CDN 的方式。
+
+```html
+<!document html>
+<html>
+  <head>
+    <script src="https://unpkg.com/@yomo/webtransport-polyfill"></script>
+    <script>
+      new WebTransport('https://example.com');
+    </script>
+  </head>
+</html>
+```

@@ -1,0 +1,99 @@
+---
+sidebar_position: 3
+---
+# API
+
+## new WebTransport ()
+
+通过构造函数创建一个新的 WebTransport 实例。
+
+- 类型
+
+```ts
+new WebTransport(url: string)
+```
+
+- 详细信息
+
+参数是一个 URL 字符串，用于指定 WebTransport 服务器的地址。
+
+- 示例
+
+```ts
+const wt = new WebTransport('https://example.com/wt');
+```
+
+## wt.ready
+
+一个 Promise，当 WebTransport 连接建立时，会被解析。
+
+```ts
+wt.ready.then(() => {
+  console.log('WebTransport ready');
+});
+```
+
+## wt.closed
+
+一个 Promise，当 WebTransport 连接关闭时，会被解析。
+
+```ts
+wt.closed.then(() => {
+  console.log('WebTransport closed');
+});
+```
+
+## wt.datagrams
+
+一个可读流，用于接收来自服务器的数据报。
+
+```ts
+wt.datagrams.readable
+  .getReader()
+  .read()
+  .then(({ value, done }) => {
+    console.log(value);
+  });
+```
+
+## wt.createSendStream()
+
+创建一个新的 SendStream，用于向服务器发送数据。
+
+```ts
+const sendStream = await wt.createSendStream();
+sendStream.write('hello');
+sendStream.close();
+```
+
+## wt.createBidirectionalStream()
+
+创建一个新的 BidirectionalStream，用于双向通信。
+
+```ts
+const bidirectionalStream = await wt.createBidirectionalStream();
+bidirectionalStream.readable
+  .getReader()
+  .read()
+  .then(({ value, done }) => {
+    console.log(value);
+  });
+bidirectionalStream.writable.write('hello');
+bidirectionalStream.writable.close();
+```
+
+## wt.createUnidirectionalStream()
+
+创建一个新的 UnidirectionalStream，用于单向通信。
+
+```ts
+const unidirectionalStream = await wt.createUnidirectionalStream();
+unidirectionalStream.readable
+  .getReader()
+  .read()
+  .then(({ value, done }) => {
+    console.log(value);
+  });
+unidirectionalStream.writable.write('hello');
+unidirectionalStream.writable.close();
+```

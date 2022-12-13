@@ -1,0 +1,88 @@
+# tutorials
+
+## 开始使用 Presence React
+
+### 创建应用
+
+使用 Presence，首先需要在控制台创建一个应用，并申请一个 App Key、App Secrit 或者 Public Key，然后在客户端初始化 SDK。
+
+### 安装
+
+在终端运行如下命令：
+
+```bash
+npm i @yomo/webtransport-polyfill @yomo/presence @yomo/presence-react
+```
+
+### 创建客户端
+
+通过 `createClient` 创建一个客户端，需要传入 `publicKey` 或 `appKey` 和 `appSecret`。
+
+```ts
+import { createPresence } from '@yomo/presence';
+
+const presence = createPresence({
+  publicKey: 'your public key',
+  // or
+  // appKey: 'your app key',
+  // appSecret: 'your app secret',
+});
+```
+
+### 创建 ChannelProvider
+
+通过 `createChannelProvider` 创建一个 ChannelProvider，需要传入 `presence`。
+
+创建 `./src/presence.config.ts` 文件：
+
+```ts
+import { createChannelProvider } from '@yomo/presence-react';
+
+export const {
+  ChannelProvider,
+  usePeers,
+  useMyState,
+  useUpdateMyState,
+} = createChannelProvider({
+  presence,
+});
+```
+
+### 使用 ChannelProvider
+
+ChannelProvider 实例创建成功后，我们可以把它作为 React Context Provider 使用。
+
+在项目的根组件外，使用 `ChannelProvider` 包裹整个应用：
+
+```tsx
+import { ChannelProvider } from './presence.config';
+
+ReactDOM.render(
+  <ChannelProvider id="channel-id" initialState={initialState}>
+    <App />
+  </ChannelProvider>,
+  document.getElementById('root')
+);
+```
+
+其中 `id` 为 channel ID，`initialState` 为当前 peer 的初始状态。
+
+### 获取其他 peers 状态
+
+通过 `usePeers` 获取其他 peers 状态：
+
+```tsx
+import { usePeers } from './presence.config';
+
+const Peers = () => {
+  const peers = usePeers();
+
+  return (
+    <ul>
+      {peers.map(peer => (
+        <li key={peer.id}>{peer.state}</li>
+      ))}
+    </ul>
+  );
+};
+```
