@@ -208,7 +208,7 @@ function Others({ size, users }) {
         >
           <div
             className="w-[10px] h-[10px]
-            bg-[white] dark:bg-[#383838]
+            bg-[white] dark:bg-[#34323E]
             shadow-[0px_0px_2px_0px_rgb(0_0_0_/_0.1)] z-10"
             style={{
               transform: `translateX(calc(-${size}px / 2 + 10px / 2)) rotate(135deg)`,
@@ -216,19 +216,19 @@ function Others({ size, users }) {
           ></div>
           <div
             className="absolute w-[12px] h-[12px]
-            bg-[white] dark:bg-[#383838]
+            bg-[white] dark:bg-[#34323E]
             top-[0.5px] z-10"
             style={{
               transform: `translateX(calc(-${size}px / 2 + 10px / 2)) rotate(135deg)`,
             }}
           ></div>
 
-          <div className="bg-white dark:bg-[#383838] p-[10px] shadow-[0px_1px_4px_0px_rgb(0_0_0_/_0.1)] rounded-[6px] -translate-y-[5px]">
+          <div className="bg-white dark:bg-[#34323E] p-[10px] shadow-[0px_1px_4px_0px_rgb(0_0_0_/_0.1)] rounded-[6px] -translate-y-[5px]">
             {users.slice(5, users.length).map(user => (
               <div
                 key={user.id}
                 className="flex items-center gap-2 p-[10px]
-              dark:hover:bg-[#444444] hover:bg-[#F5F5F5] rounded-[6px]"
+              dark:hover:bg-[#414251] hover:bg-[#F5F5F5] rounded-[6px]"
               >
                 <Avatar
                   user={user}
@@ -264,20 +264,20 @@ function Tip({ display, name, id }) {
     >
       <div
         className="w-[10px] h-[10px]
-bg-[white] dark:bg-[#383838]
+bg-[white] dark:bg-[#34323E]
 shadow-[0px_0px_2px_0px_rgb(0_0_0_/_0.1)]
 rotate-[135deg] z-10
     "
       ></div>
       <div
         className="absolute w-[12px] h-[12px]
-bg-[white] dark:bg-[#383838]
+bg-[white] dark:bg-[#34323E]
 top-[0.5px]
 rotate-[135deg] z-10
     "
       ></div>
       <span
-        className=" bg-white dark:bg-[#383838] p-2 rounded-[6px] whitespace-nowrap 
+        className=" bg-white dark:bg-[#34323E] p-2 rounded-[6px] whitespace-nowrap 
       shadow-[0px_1px_4px_0px_rgb(0_0_0_/_0.1)] -translate-y-[5px]"
       >{`${name} ${id === self.id ? '(you)' : ''}`}</span>
     </div>
