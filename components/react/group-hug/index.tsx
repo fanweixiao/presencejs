@@ -43,13 +43,20 @@ export default function GroupHug(
   const [connected, setConnected] = useState(false);
   useEffect(() => {
     let channel: IChannel | null = null;
-    props.presence.then(yomo => {
+    props.presence.then((yomo) => {
       channel = yomo.joinChannel('group-hug', myState);
 
-      channel.subscribePeers(peers => {
+      channel.subscribePeers((peers) => {
+        const users: User[] = [myState];
+        // MPOP: this is a hack to avoid duplicate users
+        (peers as User[]).forEach((peer) => {
+          if (!users.find((user) => user.id === peer.id)) {
+            users.push(peer);
+          }
+        });
         setUsers([
           myState,
-          ...(peers as User[]).filter(peer => 'avatar' in peer),
+          ...(peers as User[]).filter((peer) => 'avatar' in peer),
         ]);
       });
 
@@ -224,7 +231,7 @@ function Others({ size, users }) {
           ></div>
 
           <div className="bg-white dark:bg-[#34323E] p-[10px] shadow-[0px_1px_4px_0px_rgb(0_0_0_/_0.1)] rounded-[6px] -translate-y-[5px]">
-            {users.slice(5, users.length).map(user => (
+            {users.slice(5, users.length).map((user) => (
               <div
                 key={user.id}
                 className="flex items-center gap-2 p-[10px]
