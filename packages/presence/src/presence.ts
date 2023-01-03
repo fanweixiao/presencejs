@@ -7,6 +7,7 @@ import {
   PresenceOptions,
 } from './type';
 import { randomId } from './utils';
+import WebTransport from '@yomo/webtransport-polyfill';
 
 export class Presence implements IPresence {
   #url: string = '';
@@ -102,6 +103,8 @@ export class Presence implements IPresence {
       .catch((e: Error) => {
         console.log(e);
         setTimeout(() => {
+          // force to use the polyfill
+          window.WebTransport = WebTransport;
           this.#connect();
         }, 2_000);
       });
