@@ -46,6 +46,13 @@ const sidebars = {
         'presence-react/docs',
       ],
     },
+    {
+      type: 'category',
+      label: 'components',
+      items: [
+        'components/group-hug-react',
+      ],
+    },
   ],
 };
 

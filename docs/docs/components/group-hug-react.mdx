@@ -1,0 +1,83 @@
+---
+sidebar_position: 1
+---
+
+import Link from '@docusaurus/Link';
+import { Button } from '@site/src/components/Button';
+
+# Group Hug
+
+允许用户使用图片作为头像，当没有图片时，使用用户的名字的首字母作为头像。
+
+通常用于用户多人协作等场景。
+
+## 安装
+
+```bash
+npm install --save @yomo/presence @yomo/group-hug-react
+```
+
+## 使用
+
+```tsx
+import React, { useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import { createPresence } from '@yomo/presence';
+import GroupHug from '@yomo/group-hug-react';
+import '@yomo/group-hug-react/dist/style.css';
+
+const domContainer = document.querySelector('#app');
+const root = createRoot(domContainer);
+
+const userId = 'YOUR_USER_ID';
+const avatar = 'YOUR_AVATAR_URL';
+const name = 'YOUR_USER_NAME';
+const presence = createPresence({
+  url: 'https://prscd2.allegro.earth/v1',
+  publicKey: 'YOUR_PUBLIC_KEY',
+  id: 'YOUR_CONNECTION_ID',
+  appId: 'YOUR_APP_ID',
+});
+
+const App = () => {
+  const [darkMode, setDarkMode] = useState(true);
+  return (
+    <div
+      style={{
+        padding: '200px',
+        background: darkMode ? 'black' : 'white',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'start',
+        gap: '20px',
+      }}
+    >
+      <button
+        style={{ color: darkMode ? 'white' : 'black' }}
+        onClick={() => setDarkMode(!darkMode)}
+      >
+        {darkMode ? 'close dark mode' : 'open dark mode'}
+      </button>
+      <GroupHug
+        presence={presence}
+        id={userId}
+        avatar={avatar}
+        name={name}
+        darkMode={darkMode}
+      />
+    </div>
+  );
+};
+
+root.render(<App />);
+```
+
+## 属性
+
+| 属性名   | 类型     | 默认值 | 描述             |
+| -------- | -------- | ------ | ---------------- |
+| presence | Presence | -      | Presence 实例    |
+| id       | string   | -      | 用户 ID          |
+| avatar   | string   | -      | 用户头像         |
+| name     | string   | -      | 用户名           |
+| darkMode | boolean  | false  | 是否开启暗黑模式 |
