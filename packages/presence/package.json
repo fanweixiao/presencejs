@@ -1,10 +1,10 @@
 {
   "name": "@yomo/presence",
-  "version": "2.0.0",
+  "version": "2.0.2",
   "license": "MIT",
-  "main": "dist/index.js",
   "module": "dist/index.mjs",
   "typings": "dist/index.d.ts",
+  "type": "module",
   "files": [
     "dist",
     "src"
@@ -50,6 +50,6 @@
   },
   "homepage": "https://github.com/yomorun/presencejs#readme",
   "dependencies": {
-    "@yomo/webtransport-polyfill": "^1.0.0"
+    "@yomo/webtransport-polyfill": "^1.0.1"
   }
 }
