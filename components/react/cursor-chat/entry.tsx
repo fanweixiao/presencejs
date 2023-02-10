@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createPresence } from '@yomo/presence';
 import { faker } from '@faker-js/faker';
-import LiveCursor from './index';
+import CursorChat from './index';
 import './entry.css';
 
 const domContainer = document.querySelector('#app');
@@ -44,7 +44,7 @@ const App = () => {
       >
         {darkMode ? 'close dark mode' : 'open dark mode'}
       </button>
-      <LiveCursor presence={presence} id={id} />
+      <CursorChat presence={presence} id={id} />
     </div>
   );
 };

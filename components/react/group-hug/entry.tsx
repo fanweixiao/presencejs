@@ -13,9 +13,9 @@ const avatar = Math.random() > 0.5 ? `https://robohash.org/${id}` : void 0;
 const randomName = faker.name.fullName();
 const presence = createPresence({
   url: 'https://prscd2.allegro.earth/v1',
-  publicKey: 'kmJAUnCtkWbkNnhXYtZAGEJzGDGpFo1e1vkp6cm',
+  publicKey: (import.meta as any).env.VITE_PUBLIC_KEY,
   id,
-  appId: 'lzq',
+  appId: (import.meta as any).env.VITE_APP_ID,
 });
 
 const App = () => {
