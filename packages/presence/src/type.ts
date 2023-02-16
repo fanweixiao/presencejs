@@ -14,6 +14,7 @@ export type PayloadPacket<T> = {
   payload?: T;
 };
 
+// external options, api caller should use this options
 export type PresenceOptions = {
   url?: string;
   id?: string;
@@ -21,17 +22,21 @@ export type PresenceOptions = {
   appId?: string;
   appSecret?: string;
   endpoint?: string;
+  reliable?: boolean; // default: false
 };
 
+// internal options, create presence instance with this options
 export type InternalPresenceOptions = {
   url: string;
   id: string;
+  reliable: boolean;
   publicKey?: string;
   appId?: string;
   appSecret?: string;
   endpoint?: string;
 };
 
+// presence instance
 export interface IPresence {
   onReady(callbackFn: (presence: IPresence) => void): void;
   joinChannel: (channelId: string, metadata?: Metadata) => IChannel;

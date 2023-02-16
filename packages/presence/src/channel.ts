@@ -19,13 +19,22 @@ export class Channel implements IChannel {
   #peers: Peers | null = null;
   #joinTimestamp: number;
   #writer: any;
+  #reliable: boolean;
   id: string;
-  constructor(id: string, metadata: Metadata, transport: any) {
+  constructor(
+    id: string,
+    metadata: Metadata,
+    transport: any,
+    options: {
+      reliable: boolean;
+    }
+  ) {
     this.id = id;
     this.#metadata = metadata;
     this.#transport = transport;
     this.#joinTimestamp = Date.now();
     this.#joinTimestamp;
+    this.#reliable = options.reliable;
     this.#read();
     this.#joinChannel();
   }
@@ -76,8 +85,7 @@ export class Channel implements IChannel {
     };
   }
   #broadcast<T>(eventName: string, dataPacket: PayloadPacket<T>) {
-    const writer = this.#transport.datagrams.writable.getWriter();
-    writer.write(
+    this.#write(
       signalingEncode({
         t: 'data',
         c: this.id,
@@ -87,12 +95,14 @@ export class Channel implements IChannel {
         }),
       })
     );
-    writer.close();
   }
   async #write(data: Uint8Array) {
     if (!this.#writer) {
       if (this.#transport.datagrams.writable.locked) {
-        return
+        return;
+      }
+      if (this.#reliable) {
+        this.#writer = this.#transport.createSendStream().getWriter();
       }
       this.#writer = this.#transport.datagrams.writable.getWriter();
     }
@@ -102,7 +112,12 @@ export class Channel implements IChannel {
   }
   async #read() {
     try {
-      const reader = this.#transport.datagrams.readable.getReader();
+      let reader;
+      if (this.#reliable) {
+        reader = this.#transport.receiveStreams.readable.getReader();
+      } else {
+        reader = this.#transport.datagrams.readable.getReader();
+      }
       while (true) {
         const { value } = await reader.read();
         const data = new Uint8Array(value);

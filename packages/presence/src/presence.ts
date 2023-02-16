@@ -70,7 +70,9 @@ export class Presence implements IPresence {
       ...this.#metadata,
       ...(metadata || {}),
     };
-    const channel = new Channel(channelId, this.#metadata, this.#transport);
+    const channel = new Channel(channelId, this.#metadata, this.#transport, {
+      reliable: this.#options.reliable,
+    });
     this.#channels.set(channelId, channel);
     return channel;
   }
@@ -111,12 +113,24 @@ export class Presence implements IPresence {
   }
 }
 
+const defaultOptions = {
+  id: randomId(),
+  url: 'https://prscd2.allegro.earth/v1',
+  reliable: false,
+};
+
 export function createPresence(options: PresenceOptions): Promise<IPresence>;
 export function createPresence(options: PresenceOptions) {
   return new Promise((resolve) => {
-    let id = options?.id || randomId();
-    let url = options?.url || 'https://prscd2.allegro.earth/v1';
-    const internalOptions: InternalPresenceOptions = { ...options, id, url };
+    let id = options?.id || defaultOptions.id;
+    let url = options?.url || defaultOptions.url;
+    let reliable = options?.reliable || defaultOptions.reliable;
+    const internalOptions: InternalPresenceOptions = {
+      ...options,
+      id,
+      url,
+      reliable,
+    };
     const presence = new Presence(internalOptions);
     presence.onReady(() => {
       resolve(presence);
