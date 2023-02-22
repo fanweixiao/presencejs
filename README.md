@@ -1,26 +1,25 @@
 <p align="center">
     <img alt="presencejs logo " src="/logo.png"><br/>
-    <a aria-label="NPM version" href="https://www.npmjs.com/package/@yomo/presencejs">
-        <img alt="NPM version" src="https://badgen.net/npm/v/@yomo/presencejs">
+    <a aria-label="NPM version" href="https://www.npmjs.com/package/@yomo/presence">
+        <img alt="NPM version" src="https://badgen.net/npm/v/@yomo/presence">
     </a>
     <a aria-label="License" href="https://github.com/yomorun/presencejs/blob/main/LICENSE">
-        <img alt="License" src="https://badgen.net/npm/license/@yomo/presencejs">
+        <img alt="License" src="https://badgen.net/npm/license/@yomo/presence">
     </a><br/><br/>
     <a href="https://www.producthunt.com/posts/cursor-chat-anywhere?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-cursor-chat-anywhere" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=333289&theme=dark" alt="Cursor Chat Anywhere - Add Figma like cursor chat to your own products | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
 </p>
 
 ## 🧬 Introduction
 
-`Presencejs` is a JavaScript library that allows you to build real-time web applications quickly. The server is built on top of [YoMo](https://github.com/yomorun/yomo), which will provide secure, low-latency, and high-performance geo-distributed services.
+`Presencejs` is a JavaScript library that allows you to build real-time web applications . The server is built on top of [YoMo](https://github.com/yomorun/yomo), which will provide secure, low-latency, and high-performance geo-distributed services.
 
+- **Geo-distributed** Deploy your realtime backend close to users all over the world
 - **WebTransport** [Introduction: WebTransport is an API offering low-latency, bidirectional, client-server messaging.](https://web.dev/webtransport/)
   - Fallback to WebSocket if WebTransport connection cannot be established
 - **Secure**, **low-latency** and **high-performance**
 - Support **unreliable** and **reliable** data transmitting
 - **Real-time** experience
 - Auto Reconnection
-- Built-in error retry
-- TypeScript
 
 ...and a lot more.
 
@@ -225,19 +224,6 @@ yomo.on('closed', () => {
 | `toRoom`            | Enter a room                                                    | `toRoom(roomName: string): Presence`                |
 | `ofRoom`            | Function for sending data streams to the server                 | `ofRoom(roomName: string, event: string)`           |
 | `close`             | A connection to YoMo can be closed once it is no longer needed. | `close(): void`                                     |
-
-## ⛷ Contributors
-
-[//]: contributor-faces
-
-<a href="https://github.com/osdodo"><img src="https://avatars.githubusercontent.com/u/24246314?v=4" title="Osdodo" width="60" height="60"></a>
-<a href="https://github.com/yoname"><img src="https://avatars.githubusercontent.com/u/25947177?v=4" title="Yona" width="60" height="60"></a>
-<a href="https://github.com/vishvadlamani"><img src="https://avatars.githubusercontent.com/u/16164144?v=4" title="Vish Vadlamani" width="60" height="60"></a>
-<a href="https://github.com/xiaojian-hong"><img src="https://avatars.githubusercontent.com/u/48110142?v=4" title="XJ Hong" width="60" height="60"></a>
-<a href="https://github.com/venjiang"><img src="https://avatars.githubusercontent.com/u/1587671?v=4" title="Venjiang" width="60" height="60"></a>
-<a href="https://github.com/fanweixiao"><img src="https://avatars.githubusercontent.com/u/65603?v=4" title="C.C." width="60" height="60"></a>
-
-[//]: contributor-faces
 
 ## License
 
