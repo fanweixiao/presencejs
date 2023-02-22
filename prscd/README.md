@@ -18,10 +18,12 @@ The open source backend for Presencejs v2.0
 
 ## 🥷🏻 Development
 
-1. Start YoMo Zipper service in terminal-1：`yomo serve -c yomo.yaml`
+1. Start YoMo Zipper service in terminal-1：`yomo serve -c dev-single-node.yaml`
 1. Start prscd service in terminal-2：`make dev`
 1. Open `webtransport.html` by Chrome with Dev Tools
 1. Open `websocket.html` by Chrome with Dev Tools
+
+![](https://github.com/fanweixiao/gifs-repo/blob/main/prscd-readme.gif)
 
 ## 🦸🏻 Self-hosting
 
