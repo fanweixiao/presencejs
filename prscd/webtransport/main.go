@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/lucas-clemente/quic-go"
+	"github.com/quic-go/quic-go"
 
 	"yomo.run/prscd/chirp"
 	"yomo.run/prscd/util"

@@ -4,7 +4,7 @@ import (
 	"net"
 
 	"github.com/gobwas/ws/wsutil"
-	"github.com/lucas-clemente/quic-go"
+	"github.com/quic-go/quic-go"
 )
 
 // Connection is connection either WebSocket or WebTransport

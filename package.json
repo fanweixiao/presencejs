@@ -1,14 +1,11 @@
 {
-  "private": true,
-  "name": "yomo",
+  "name": "presencejs",
   "version": "next",
-  "description": "@yomo/presence⚡️ made realtime web applications edge-aware by YoMo",
+  "description": "Edge infra for Realtime Web Applications with Geo-distributed architecture",
   "keywords": [
     "yomo",
     "realtime",
-    "real-time web",
     "presence",
-    "presencejs",
     "metaverse",
     "websocket",
     "webtransport"
@@ -22,7 +19,7 @@
     "yarn": false,
     "contents": "dist"
   },
-  "author": "yomo",
+  "author": "https://yomo.run",
   "contributors": [
     {
       "name": "luzhenqian",
@@ -30,7 +27,12 @@
       "url": "https://www.luzhenqian.com"
     },
     {
-      "name": "osdodo"
+      "name": "fanweixiao",
+      "email": "fanweixiao@gmail.com"
+    },
+    {
+      "name": "yoname",
+      "email": "alwaysgameover@gmail.com"
     }
   ],
   "module": "dist/presencejs.esm.js",

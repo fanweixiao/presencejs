@@ -2,6 +2,7 @@ GO ?= go
 GOFMT ?= gofmt "-s"
 GOFILES := $(shell find . -name "*.go")
 VETPACKAGES ?= $(shell $(GO) list ./... | grep -v /example/)
+VER ?= 2.0.3
 
 .PHONY: fmt
 fmt:
@@ -17,10 +18,12 @@ build:
 	$(GO) build -o bin/prscd2 main.go
 
 dist: clean
-	GOOS=linux GOARCH=amd64 $(GO) build -ldflags "-s -w" -o dist/prscd2-linux main.go
-	GOOS=linux GOARCH=arm64 $(GO) build -ldflags "-s -w" -o dist/prscd2-linux-arm main.go
-	@cp lo.allegrocloud.io.cert.pem dist/.
-	@cp lo.allegrocloud.io.key.pem dist/.
+	GOOS=linux GOARCH=amd64 $(GO) build -ldflags "-s -w" -o dist/prscd-${VER}-x86_64-linux main.go
+	GOOS=linux GOARCH=arm64 $(GO) build -ldflags "-s -w" -o dist/prscd-${VER}-arm64-linux main.go
+	GOOS=darwin GOARCH=amd64 $(GO) build -ldflags "-s -w" -o dist/prscd-${VER}-x86_64-darwin main.go
+	GOOS=darwin GOARCH=arm64 $(GO) build -ldflags "-s -w" -o dist/prscd-${VER}-arm64-darwin main.go
+	# GOOS=windows GOARCH=amd64 $(GO) build -ldflags "-s -w" -o dist/prscd-${VER}-x86_64-windows main.go
+	# GOOS=windows GOARCH=arm64 $(GO) build -ldflags "-s -w" -o dist/prscd-${VER}-arm64-windows main.go
 
 dev:
 	DEBUG=true PORT=8443 $(GO) run -race main.go
@@ -42,6 +45,3 @@ testpage:
 clean:
 	@rm -rf dist
 	@rm -rf bin
-
-deploy:
-	scp -o Cipher=arcfour dist/prscd2-linux-arm v2-zipper-sgp-arm:prscd.v2/prscd2-1205
