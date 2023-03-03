@@ -15,18 +15,18 @@ lint:
 	revive -exclude epoll.go -formatter friendly ./...
 
 build:
-	$(GO) build -o bin/prscd2 main.go
+	$(GO) build -o bin/prscd2
 
 dist: clean
-	GOOS=linux GOARCH=amd64 $(GO) build -ldflags "-s -w" -o dist/prscd-${VER}-x86_64-linux main.go
-	GOOS=linux GOARCH=arm64 $(GO) build -ldflags "-s -w" -o dist/prscd-${VER}-arm64-linux main.go
-	GOOS=darwin GOARCH=amd64 $(GO) build -ldflags "-s -w" -o dist/prscd-${VER}-x86_64-darwin main.go
-	GOOS=darwin GOARCH=arm64 $(GO) build -ldflags "-s -w" -o dist/prscd-${VER}-arm64-darwin main.go
-	# GOOS=windows GOARCH=amd64 $(GO) build -ldflags "-s -w" -o dist/prscd-${VER}-x86_64-windows main.go
-	# GOOS=windows GOARCH=arm64 $(GO) build -ldflags "-s -w" -o dist/prscd-${VER}-arm64-windows main.go
+	GOOS=linux GOARCH=amd64 $(GO) build -ldflags "-s -w" -o dist/prscd-${VER}-x86_64-linux
+	GOOS=linux GOARCH=arm64 $(GO) build -ldflags "-s -w" -o dist/prscd-${VER}-arm64-linux
+	GOOS=darwin GOARCH=amd64 $(GO) build -ldflags "-s -w" -o dist/prscd-${VER}-x86_64-darwin
+	GOOS=darwin GOARCH=arm64 $(GO) build -ldflags "-s -w" -o dist/prscd-${VER}-arm64-darwin
+	GOOS=windows GOARCH=amd64 $(GO) build -ldflags "-s -w" -o dist/prscd-${VER}-x86_64-windows.exe
+	GOOS=windows GOARCH=arm64 $(GO) build -ldflags "-s -w" -o dist/prscd-${VER}-arm64-windows.exe
 
 dev:
-	DEBUG=true PORT=8443 $(GO) run -race main.go
+	DEBUG=true PORT=8443 $(GO) run -race .
 
 test:
 	MESH_ID=test go test -v chirp/*

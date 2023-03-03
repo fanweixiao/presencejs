@@ -5,9 +5,6 @@ import (
 	"crypto/tls"
 	"fmt"
 	"os"
-	"os/signal"
-	"runtime"
-	"syscall"
 
 	"yomo.run/prscd/chirp"
 	"yomo.run/prscd/util"
@@ -69,7 +66,7 @@ func main() {
 	// - `kill -SIGUSR1 <pid>` customize
 	// - `kill -SIGTERM <pid>` graceful shutdown
 	// - `kill -SIGUSR2 <pid>` inspect golang GC
-	log.Info("pid: %d", os.Getpid())
+	log.Info("PID: %d", os.Getpid())
 	// write pid to ./prscd.pid, overwrite if exists
 	pidFile := "./prscd.pid"
 	f, err := os.OpenFile(pidFile, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
@@ -82,23 +79,8 @@ func main() {
 		log.Fatal(err)
 	}
 
+	log.Debug("Prscd Dev Server is running on https://lo.yomo.dev:8443/v1")
+
 	c := make(chan os.Signal, 1)
-	signal.Notify(c, syscall.SIGTERM, syscall.SIGUSR2, syscall.SIGUSR1, syscall.SIGINT)
-	log.Info("Listening SIGUSR1, SIGUSR2, SIGTERM/SIGINT...")
-	for p1 := range c {
-		log.Info("Received signal: %s", p1)
-		if p1 == syscall.SIGTERM || p1 == syscall.SIGINT {
-			log.Info("graceful shutting down ... %s", p1)
-			os.Exit(0)
-		} else if p1 == syscall.SIGUSR2 {
-			// kill -SIGUSR2 <pid> will write ystat logs to /tmp/conns.log
-			chirp.DumpConnectionsState()
-			var m runtime.MemStats
-			runtime.ReadMemStats(&m)
-			fmt.Printf("\tNumGC = %v\n", m.NumGC)
-		} else if p1 == syscall.SIGUSR1 {
-			log.Info("SIGUSR1")
-			chirp.DumpNodeState()
-		}
-	}
+	register_os_signal(c)
 }
