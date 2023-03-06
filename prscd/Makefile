@@ -2,6 +2,7 @@ GO ?= go
 GOFMT ?= gofmt "-s"
 GOFILES := $(shell find . -name "*.go")
 VETPACKAGES ?= $(shell $(GO) list ./... | grep -v /example/)
+
 VER ?= 2.0.3
 
 .PHONY: fmt
@@ -15,6 +16,7 @@ lint:
 	revive -exclude epoll.go -formatter friendly ./...
 
 build:
+
 	$(GO) build -o bin/prscd2
 
 dist: clean

@@ -135,4 +135,5 @@ TCP and UDP on the `PORT` shall has to be allowed in security rules.
 - `YOMO_SNDR_NAME`: the name of YoMo Source
 - `YOMO_RCVR_NAME`: the name of YoMo Stream Function
 - `CERT_FILE`: The SSL cert file path of prscd
+
 - `KEY_FILE`: The SSL key file path of prscd

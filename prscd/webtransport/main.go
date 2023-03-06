@@ -1,4 +1,4 @@
-// Package webtransport 运行 webtrans server 服务
+// Package webtransport runs the webtrans server service
 package webtransport
 
 import (
