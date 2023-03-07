@@ -11,20 +11,16 @@
 
 ## 🧬 Introduction
 
-`Presencejs` is a JavaScript library that allows you to build real-time web applications with secure, low-latency, and high-performance geo-distributed architecture.
+`Presencejs` is a JavaScript library that enables the creation of real-time web applications with a secure, low-latency, and high-performance geo-distributed architecture.
 
-- **Geo-distributed** Deploy your realtime backend close to users all over the world
-- **WebTransport** [Introduction: WebTransport is an API offering low-latency, bidirectional, client-server messaging.](https://web.dev/webtransport/)
-  - Fallback to WebSocket if WebTransport connection cannot be established
-- **Secure**, **low-latency** and **high-performance**
-- Support **unreliable** and **reliable** data transmitting
-- **Real-time** and **collaboritve** experience
-- **Easy** to use
-- **Free** for self-managed hosting
+Key Features:
 
-...and a lot more.
-
-With `presencejs`, components will get data flow in real time. Thus, the UI will be always **fast** and **reactive**.
+- **Geo-distributed Architecture**: Deploy your real-time backend close to users all over the world for better performance.
+- **WebTransport Support**: WebTransport is an new API that offers low-latency, bidirectional, client-server messaging.
+- **Secure**, **low-latency**, and **high-performance**: PresenceJS prioritizes security, speed, and performance for a seamless user experience.
+- **Real-time and collaborative experience**: With PresenceJS, components receive data flow in real time, ensuring fast and reactive UI by offering the flexibility to send either unreliable or reliable data
+- **Easy to use**: PresenceJS is simple to implement, making it an accessible solution for developers.
+- **Free for self-managed hosting**: PresenceJS is free to use for self-managed hosting, making it an affordable choice for projects of any size.
 
 ## 🌟 Showcase
 
