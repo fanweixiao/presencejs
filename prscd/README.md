@@ -25,6 +25,8 @@ The open source backend for Presencejs v2.0
 
 ![](https://github.com/fanweixiao/gifs-repo/blob/main/prscd-readme.gif)
 
+[![asciicast](https://asciinema.org/a/heue8PgJxdgFDotKYuohptQ9R.svg)](https://asciinema.org/a/heue8PgJxdgFDotKYuohptQ9R)
+
 ## 🦸🏻 Self-hosting
 
 Compile:
