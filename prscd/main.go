@@ -62,6 +62,9 @@ func main() {
 	// start WebTransport listener
 	go webtransport.ListenAndServe(addr, config)
 
+	// start Probe Server for AWS health check
+	go startProbeServer(61226)
+
 	// Ctrl-C or kill <pid> graceful shutdown
 	// - `kill -SIGUSR1 <pid>` customize
 	// - `kill -SIGTERM <pid>` graceful shutdown

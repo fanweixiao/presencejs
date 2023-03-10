@@ -55,6 +55,8 @@ func ListenAndServe(addr string, config *tls.Config) {
 
 		var cuid, appID string // presencejs client user id
 
+		rejectionHeader := ws.RejectionHeader(ws.HandshakeHeaderString("X-Prscd-Version: v2\r\nX-Prscd-MeshID: " + os.Getenv("MESH_ID") + "\r\n"))
+
 		// HTTP layer
 		u := ws.Upgrader{
 			OnRequest: func(req []byte) error {
@@ -64,7 +66,7 @@ func ListenAndServe(addr string, config *tls.Config) {
 					log.Error("url parse error: %s", err)
 					return ws.RejectConnectionError(
 						ws.RejectionStatus(500),
-						ws.RejectionHeader(ws.HandshakeHeaderString("X-Prscd-Version: v2\r\nX-Prscd-MeshID: "+os.Getenv("MESH_ID")+"\r\n")),
+						rejectionHeader,
 						ws.RejectionReason("url parse error"),
 					)
 				}
@@ -72,7 +74,7 @@ func ListenAndServe(addr string, config *tls.Config) {
 				if url.Path != chirp.Endpoint {
 					return ws.RejectConnectionError(
 						ws.RejectionStatus(404),
-						ws.RejectionHeader(ws.HandshakeHeaderString("X-Prscd-Version: v2\r\nX-Prscd-MeshID: "+os.Getenv("MESH_ID")+"\r\n")),
+						rejectionHeader,
 						ws.RejectionReason("path not allowed"),
 					)
 				}
@@ -80,7 +82,7 @@ func ListenAndServe(addr string, config *tls.Config) {
 				if cuid == "" {
 					return ws.RejectConnectionError(
 						ws.RejectionStatus(401),
-						ws.RejectionHeader(ws.HandshakeHeaderString("X-Prscd-Version: v2\r\nX-Prscd-MeshID: "+os.Getenv("MESH_ID")+"\r\n")),
+						rejectionHeader,
 						ws.RejectionReason("id must not be empty"),
 					)
 				}
@@ -89,7 +91,7 @@ func ListenAndServe(addr string, config *tls.Config) {
 				if authPublicKey == "" {
 					return ws.RejectConnectionError(
 						ws.RejectionStatus(401),
-						ws.RejectionHeader(ws.HandshakeHeaderString("X-Prscd-Version: v2\r\nX-Prscd-MeshID: "+os.Getenv("MESH_ID")+"\r\n")),
+						rejectionHeader,
 						ws.RejectionReason("publickey must not be empty"),
 					)
 				}
@@ -98,7 +100,7 @@ func ListenAndServe(addr string, config *tls.Config) {
 				if !ok {
 					return ws.RejectConnectionError(
 						ws.RejectionStatus(403),
-						ws.RejectionHeader(ws.HandshakeHeaderString("X-Prscd-Version: v2\r\nX-Prscd-MeshID: "+os.Getenv("MESH_ID")+"\r\n")),
+						rejectionHeader,
 						ws.RejectionReason("illegal public key"),
 					)
 				}
