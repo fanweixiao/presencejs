@@ -29,6 +29,14 @@ func (l *plog) Info(format string, a ...any) {
 	_, _ = fmt.Fprintf(os.Stdout, format+"\r\n", a...)
 }
 
+// Inspect prints log to stdout, but will not add a newline
+func (l *plog) Inspect(format string, a ...any) {
+	if l.logLevel > INFO {
+		return
+	}
+	_, _ = fmt.Fprintf(os.Stdout, format+"\r", a...)
+}
+
 // Error prints log to stderr.
 func (l *plog) Error(format string, a ...any) {
 	if l.logLevel > DEBUG {

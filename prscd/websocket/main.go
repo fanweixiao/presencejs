@@ -5,6 +5,7 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/binary"
+	"errors"
 	"io"
 	"net"
 	"net/http"
@@ -51,7 +52,6 @@ func ListenAndServe(addr string, config *tls.Config) {
 			conn.Close()
 			continue
 		}
-		log.Info("[ws] new conn: %s", conn.RemoteAddr().String())
 
 		var cuid, appID string // presencejs client user id
 
@@ -64,24 +64,24 @@ func ListenAndServe(addr string, config *tls.Config) {
 					log.Error("url parse error: %s", err)
 					return ws.RejectConnectionError(
 						ws.RejectionStatus(500),
-						ws.RejectionHeader(ws.HandshakeHeaderString("X-Prscd-Version: v2\r\n")),
-						ws.RejectionReason("Error Occurd\r\n"),
+						ws.RejectionHeader(ws.HandshakeHeaderString("X-Prscd-Version: v2\r\nX-Prscd-MeshID: "+os.Getenv("MESH_ID")+"\r\n")),
+						ws.RejectionReason("url parse error"),
 					)
 				}
-				log.Info("url: %s, query: %+v", url.Path, url.Query())
+				log.Info("path: %s, query: %+v", url.Path, url.Query())
 				if url.Path != chirp.Endpoint {
 					return ws.RejectConnectionError(
 						ws.RejectionStatus(404),
-						ws.RejectionHeader(ws.HandshakeHeaderString("X-Prscd-Version: v2\r\n")),
-						ws.RejectionReason("I am not allowed\r\n"),
+						ws.RejectionHeader(ws.HandshakeHeaderString("X-Prscd-Version: v2\r\nX-Prscd-MeshID: "+os.Getenv("MESH_ID")+"\r\n")),
+						ws.RejectionReason("path not allowed"),
 					)
 				}
 				cuid = url.Query().Get("id")
 				if cuid == "" {
 					return ws.RejectConnectionError(
 						ws.RejectionStatus(401),
-						ws.RejectionHeader(ws.HandshakeHeaderString("X-Prscd-Version: v2\r\n")),
-						ws.RejectionReason("id must not be empty\r\n"),
+						ws.RejectionHeader(ws.HandshakeHeaderString("X-Prscd-Version: v2\r\nX-Prscd-MeshID: "+os.Getenv("MESH_ID")+"\r\n")),
+						ws.RejectionReason("id must not be empty"),
 					)
 				}
 				// publickey can be used for identify user if developer want integrate with other systems
@@ -89,8 +89,8 @@ func ListenAndServe(addr string, config *tls.Config) {
 				if authPublicKey == "" {
 					return ws.RejectConnectionError(
 						ws.RejectionStatus(401),
-						ws.RejectionHeader(ws.HandshakeHeaderString("X-Prscd-Version: v2\r\n")),
-						ws.RejectionReason("Publickey must not be empty\r\n"),
+						ws.RejectionHeader(ws.HandshakeHeaderString("X-Prscd-Version: v2\r\nX-Prscd-MeshID: "+os.Getenv("MESH_ID")+"\r\n")),
+						ws.RejectionReason("publickey must not be empty"),
 					)
 				}
 				var ok bool
@@ -98,8 +98,8 @@ func ListenAndServe(addr string, config *tls.Config) {
 				if !ok {
 					return ws.RejectConnectionError(
 						ws.RejectionStatus(403),
-						ws.RejectionHeader(ws.HandshakeHeaderString("X-Prscd-Version: v2\r\n")),
-						ws.RejectionReason("illegal public key\r\n"),
+						ws.RejectionHeader(ws.HandshakeHeaderString("X-Prscd-Version: v2\r\nX-Prscd-MeshID: "+os.Getenv("MESH_ID")+"\r\n")),
+						ws.RejectionReason("illegal public key"),
 					)
 				}
 				log.Info("query.id: %s", cuid)
@@ -122,9 +122,25 @@ func ListenAndServe(addr string, config *tls.Config) {
 		// zero-copy resuse the TCP connection
 		p, err := u.Upgrade(conn)
 		if err != nil {
-			log.Error("[%s] u.upgrade error: %s", conn.RemoteAddr().String(), err)
+			if err == io.EOF {
+				log.Inspect("[%s] connection closed by peer.", conn.RemoteAddr().String())
+			} else {
+				log.Info("[ws] new conn: %s", conn.RemoteAddr().String())
+				// if is rejected connection error, send close frame to client
+				var rejectErr *ws.ConnectionRejectedError
+				if errors.As(err, &rejectErr) {
+					ws.WriteFrame(conn, ws.NewCloseFrame(ws.NewCloseFrameBody(ws.StatusCode(rejectErr.StatusCode()), rejectErr.Error())))
+					log.Error("[%s] u.upgrade reject error: %v, close connection.", conn.RemoteAddr().String(), err)
+				} else {
+					log.Error("[%s] u.upgrade unknown error: %+v, close connection", conn.RemoteAddr().String(), err)
+				}
+			}
+
+			// closeConn(conn, "886")
+			conn.Write(ws.CompiledClose)
 			continue
 		}
+
 		log.Info("[%s] upgrade success, start serving: %v", conn.RemoteAddr().String(), p)
 
 		// create peer instance after Websocket handshake
@@ -167,6 +183,8 @@ func ListenAndServe(addr string, config *tls.Config) {
 					default:
 						// detect connection has been closed
 						log.Info("read error: [%v] %v", et, err)
+						// send Close frame to client
+						conn.Write(ws.MustCompileFrame(ws.NewCloseFrame(ws.NewCloseFrameBody(ws.StatusGoingAway, "bye"))))
 					}
 					// clear connection
 					peer.Disconnect()
@@ -233,6 +251,12 @@ func handlePongFrame(sid string, r io.Reader, header ws.Header) error {
 	// calculate the RTT and prints to stdout
 	appData := int64(binary.BigEndian.Uint64(buf))
 	now := time.Now().UnixMilli()
-	log.Debug("[%s]\tPONG Payload, len=%d, data=%d, 𝚫=%dms", sid, len(buf), appData, now-appData)
+	log.Inspect("[%s]\tPONG Payload, len=%d, data=%d, 𝚫=%dms", sid, len(buf), appData, now-appData)
 	return nil
+}
+
+// closeConn send Close Frame to client and close the connection
+func closeConn(conn net.Conn, reason string) {
+	ws.WriteFrame(conn, ws.NewCloseFrame(ws.NewCloseFrameBody(ws.StatusNormalClosure, reason)))
+	conn.Close()
 }
