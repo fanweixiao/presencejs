@@ -28,6 +28,8 @@ These React Serverless Components are built with `presencejs`:
 
 ### 👯‍♀️ GroupHug
 
+> Live collaborator avatars for multiplayer web apps
+
 <img width="800" alt="image" src="https://user-images.githubusercontent.com/65603/225336005-56f3605e-a150-4c9a-891c-fc5f51f46c5c.png">
 
 - Preview: https://allegrocloud.io/preview/clewfjysp0008osvwuina6qnf
