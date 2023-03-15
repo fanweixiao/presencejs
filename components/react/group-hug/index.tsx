@@ -41,12 +41,13 @@ export default function GroupHug(
   });
   const [users, setUsers] = useState<User[]>([]);
   const [connected, setConnected] = useState(false);
+  const [channel, setChannel] = useState<IChannel | null>(null);
   useEffect(() => {
     let channel: IChannel | null = null;
     props.presence.then((yomo) => {
-      channel = yomo.joinChannel('group-hug', myState);
+      const _channel = yomo.joinChannel('group-hug', myState);
 
-      channel.subscribePeers((peers) => {
+      _channel.subscribePeers((peers) => {
         const users: User[] = [myState];
         // MPOP: this is a hack to avoid duplicate users
         (peers as User[]).forEach((peer) => {
@@ -59,28 +60,57 @@ export default function GroupHug(
           ...(peers as User[]).filter((peer) => 'avatar' in peer),
         ]);
       });
-
       setUsers([myState]);
       setConnected(true);
+      setChannel(_channel);
     });
+  }, []);
 
+  useEffect(() => {
+    if (!channel) return;
     const visibilitychangeCb = () => {
-      if (document.hidden) {
-        const newState: User = { ...myState, state: 'away' };
-        channel?.updateMetadata(newState);
-        setMyState(newState);
-      } else {
-        const newState: User = { ...myState, state: 'online' };
-        channel?.updateMetadata(newState);
-        setMyState(newState);
-      }
+      const state = document.hidden ? 'away' : 'online';
+      const newState: User = {
+        ...myState,
+        state,
+      };
+      setMyState(newState);
+      channel.broadcast('change-state', { state });
     };
     document.addEventListener('visibilitychange', visibilitychangeCb);
 
     return () => {
       document.removeEventListener('visibilitychange', visibilitychangeCb);
     };
-  }, []);
+  }, [channel]);
+
+  useEffect(() => {
+    if (!channel) return;
+    const unsubscribe = channel.subscribe(
+      'change-state',
+      ({ payload: { state }, state: { id } }: any) => {
+        // find user
+        const user = users.find((user) => user.id === id);
+        if (user) {
+          const newState: User = {
+            ...user,
+            state,
+          };
+          setUsers(
+            users.map((user) => {
+              if (user.id === id) {
+                return newState;
+              }
+              return user;
+            })
+          );
+        }
+      }
+    );
+    return () => {
+      unsubscribe();
+    };
+  }, [channel, users]);
 
   if (!connected) {
     return <div></div>;

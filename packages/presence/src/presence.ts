@@ -3,18 +3,20 @@ import {
   IChannel,
   InternalPresenceOptions,
   IPresence,
-  Metadata,
+  State,
   PresenceOptions,
 } from './type';
 import { randomId } from './utils';
 import WebTransport from '@yomo/webtransport-polyfill';
+import { Logger } from './logger';
 
 export class Presence implements IPresence {
   #url: string = '';
-  #metadata: Metadata;
+  #metadata: State;
   #channels: Map<string, IChannel> = new Map();
   #transport: any;
   #options: InternalPresenceOptions;
+  #logger: Logger;
   #onReadyCallbackFn: Function = () => {};
   #onErrorCallbackFn: Function = () => {};
   #onClosedCallbackFn: Function = () => {};
@@ -24,6 +26,10 @@ export class Presence implements IPresence {
       id: options.id,
     };
     this.#options = options;
+    this.#logger = new Logger({
+      enabled: options.debug,
+      module: 'presence',
+    });
     (async () => {
       this.#url = await this.#formatUrl();
       this.#connect();
@@ -65,13 +71,14 @@ export class Presence implements IPresence {
     this.#onClosedCallbackFn = callbackFn;
   }
 
-  joinChannel(channelId: string, metadata?: Metadata) {
+  joinChannel(channelId: string, metadata?: State) {
     this.#metadata = {
       ...this.#metadata,
       ...(metadata || {}),
     };
     const channel = new Channel(channelId, this.#metadata, this.#transport, {
       reliable: this.#options.reliable,
+      debug: this.#options.debug || false,
     });
     this.#channels.set(channelId, channel);
     return channel;
@@ -103,7 +110,7 @@ export class Presence implements IPresence {
         });
       })
       .catch((e: Error) => {
-        console.log(e);
+        this.#logger.log('error %o', e);
         setTimeout(() => {
           // force to use the polyfill
           window.WebTransport = WebTransport;
@@ -125,11 +132,13 @@ export function createPresence(options: PresenceOptions) {
     let id = options?.id || defaultOptions.id;
     let url = options?.url || defaultOptions.url;
     let reliable = options?.reliable || defaultOptions.reliable;
+    const debug = options?.debug || false;
     const internalOptions: InternalPresenceOptions = {
       ...options,
       id,
       url,
       reliable,
+      debug,
     };
     const presence = new Presence(internalOptions);
     presence.onReady(() => {

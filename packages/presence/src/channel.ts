@@ -2,50 +2,77 @@ import {
   ChannelEventSubscribeCallbackFn,
   PayloadPacket,
   IChannel,
-  Metadata,
+  State,
   IPeers,
   PeersSubscribeCallbackFn,
   Signaling,
 } from './type';
 import { encode as msgPackEncode, decode } from '@msgpack/msgpack';
+import { Logger } from './logger';
 
 const signalingEncode = (data: Signaling) => msgPackEncode(data);
 
 export class Channel implements IChannel {
   #transport: any;
-  #metadata: Metadata;
+  #state: State;
   #subscribers = new Map<string, ChannelEventSubscribeCallbackFn<any>>();
-  #members: Metadata[] = [];
+  #members: State[] = [];
   #peers: Peers | null = null;
   #joinTimestamp: number;
   #writer: any;
   #reliable: boolean;
+  #logger: Logger;
   id: string;
   constructor(
     id: string,
-    metadata: Metadata,
+    state: State,
     transport: any,
     options: {
       reliable: boolean;
+      debug: boolean;
     }
   ) {
     this.id = id;
-    this.#metadata = metadata;
+    this.#state = state;
     this.#transport = transport;
+    this.#logger = new Logger({
+      enabled: options.debug,
+      module: 'Presence Channel',
+    });
     this.#joinTimestamp = Date.now();
     this.#joinTimestamp;
     this.#reliable = options.reliable;
     this.#read();
     this.#joinChannel();
+    this.#addLeaveListener();
+  }
+  #addLeaveListener() {
+    if (typeof window !== 'undefined') {
+      window.addEventListener('beforeunload', () => {
+        this.leave();
+      });
+    }
   }
   broadcast<T>(eventName: string, payload: T): void {
-    this.#broadcast(eventName, this.#getDataPacket<T>(payload));
+    this.#broadcast(
+      eventName,
+      this.#getDataPacket({
+        state: {
+          id: this.#state.id,
+        },
+        payload,
+      })
+    );
   }
-  async subscribe<T>(
+  subscribe<T>(
     eventName: string,
     callbackFn: ChannelEventSubscribeCallbackFn<T>
-  ): Promise<void> {
+  ) {
     this.#subscribers.set(eventName, callbackFn);
+    // unsubscribe
+    return () => {
+      this.#subscribers.delete(eventName);
+    };
   }
   subscribePeers(callbackFn: PeersSubscribeCallbackFn) {
     if (!this.#peers) {
@@ -54,33 +81,40 @@ export class Channel implements IChannel {
     return this.#peers.subscribe(callbackFn);
   }
   leave() {
-    this.#transport.close();
-  }
-  updateMetadata(metadata: Metadata) {
-    this.#metadata = metadata;
     this.#write(
       signalingEncode({
         t: 'control',
-        op: 'peer_state',
+        op: 'peer_offline',
         c: this.id,
-        p: this.#metadata.id,
-        pl: msgPackEncode(this.#metadata),
       })
     );
+    // this.#transport.close();
   }
+  // #updateMetadata(metadata: State) {
+  //   this.#state = metadata;
+  //   this.#write(
+  //     signalingEncode({
+  //       t: 'control',
+  //       op: 'peer_state',
+  //       c: this.id,
+  //       p: this.#state.id,
+  //       pl: msgPackEncode(this.#state),
+  //     })
+  //   );
+  // }
   #joinChannel() {
     this.#write(
       signalingEncode({
         t: 'control',
         op: 'channel_join',
         c: this.id,
-        pl: msgPackEncode(this.#metadata),
+        pl: msgPackEncode(this.#state),
       })
     );
   }
   #getDataPacket<T>(payload: T) {
     return {
-      metadata: this.#metadata,
+      state: this.#state,
       payload,
     };
   }
@@ -123,7 +157,13 @@ export class Channel implements IChannel {
         const data = new Uint8Array(value);
         const signaling: Signaling = decode(data) as Signaling;
         if (signaling.t === 'control') {
-          console.log(signaling.op, signaling.p, signaling.pl);
+          this.#logger.log(
+            'control ',
+            `op: ${signaling.op}\n`,
+            `p: ${signaling.p}\n`,
+            'pl: ',
+            signaling.pl
+          );
           if (signaling.op === 'channel_join') {
             this.#online();
             this.#syncState();
@@ -153,12 +193,12 @@ export class Channel implements IChannel {
         }
       }
     } catch (e) {
-      console.log(e);
+      this.#logger.log('read error: ', e);
       return;
     }
   }
   #handleOnline(id: string) {
-    if (id !== this.#metadata.id) {
+    if (id !== this.#state.id) {
       const idx = this.#members.findIndex((member) => member.id === id);
       if (idx > -1) {
         this.#members[idx] = { id };
@@ -170,17 +210,10 @@ export class Channel implements IChannel {
     }
   }
   #handleSync(payload: any) {
-    if (payload.id !== this.#metadata.id) {
+    if (payload.id !== this.#state.id) {
       const idx = this.#members.findIndex((member) => {
-        console.log(
-          String(member.id) === String(payload.id),
-          member.id,
-          payload.id
-        );
-
         return String(member.id) === String(payload.id);
       });
-      console.log('idx:', idx, this.#members, payload.id);
 
       if (idx > -1) {
         this.#members[idx] = payload;
@@ -191,29 +224,31 @@ export class Channel implements IChannel {
     }
   }
   #online() {
-    console.log('online');
+    this.#logger.log(`online cid: ${this.id} state: `, this.#state);
     this.#write(
       signalingEncode({
         t: 'control',
         op: 'peer_online',
         c: this.id,
-        p: this.#metadata.id,
+        p: this.#state.id,
       })
     );
   }
   #syncState() {
+    this.#logger.log('sync state: ', this.#state);
     this.#write(
       signalingEncode({
         t: 'control',
         op: 'peer_state',
         c: this.id,
-        p: this.#metadata.id,
-        pl: msgPackEncode(this.#metadata),
+        p: this.#state.id,
+        pl: msgPackEncode(this.#state),
       })
     );
   }
   #offline(id: string) {
-    if (id !== this.#metadata.id) {
+    this.#logger.log(`offline id: ${id}`);
+    if (id !== this.#state.id) {
       const idx = this.#members.findIndex((member) => {
         return member.id === id;
       });
@@ -221,7 +256,6 @@ export class Channel implements IChannel {
       if (idx > -1) {
         this.#members.splice(idx, 1);
       }
-      console.log(this.#members.length, 'ccc');
 
       this.#peers?.trigger(this.#members);
     }
@@ -244,7 +278,7 @@ class Peers implements IPeers {
       }
     };
   }
-  trigger(members: Metadata[]) {
+  trigger(members: State[]) {
     this.#callbackFns.forEach((callbackFn) => {
       callbackFn(members);
     });

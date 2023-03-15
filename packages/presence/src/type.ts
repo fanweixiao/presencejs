@@ -4,13 +4,13 @@ declare global {
   }
 }
 
-export type Metadata = {
+export type State = {
   id: string;
   [key: string]: any;
 };
 
 export type PayloadPacket<T> = {
-  metadata: Metadata;
+  state: State;
   payload?: T;
 };
 
@@ -23,6 +23,7 @@ export type PresenceOptions = {
   appSecret?: string;
   endpoint?: string;
   reliable?: boolean; // default: false
+  debug?: boolean;// default: false
 };
 
 // internal options, create presence instance with this options
@@ -34,19 +35,21 @@ export type InternalPresenceOptions = {
   appId?: string;
   appSecret?: string;
   endpoint?: string;
+  debug?: boolean;
 };
 
 // presence instance
 export interface IPresence {
   onReady(callbackFn: (presence: IPresence) => void): void;
-  joinChannel: (channelId: string, metadata?: Metadata) => IChannel;
+  joinChannel: (channelId: string, metadata?: State) => IChannel;
   leaveChannel: (channelId: string) => void;
 }
 
-type Peers = Metadata[];
+type Peers = State[];
 
 export type PeersSubscribeCallbackFn = (peers: Peers) => any;
 export type PeersUnsubscribe = Function;
+export type Unsubscribe = Function;
 export type PeersSubscribe = (
   callbackFn: PeersSubscribeCallbackFn
 ) => PeersUnsubscribe;
@@ -54,7 +57,7 @@ export type IPeers = { subscribe: PeersSubscribe };
 
 export type ChannelEventSubscribeCallbackFn<T> = (
   payload: T,
-  metadata: Metadata
+  state: State
 ) => any;
 
 export interface IChannel {
@@ -63,9 +66,8 @@ export interface IChannel {
   subscribe<T>(
     eventName: string,
     callbackFn: ChannelEventSubscribeCallbackFn<T>
-  ): void;
+  ): Unsubscribe;
   subscribePeers: PeersSubscribe;
-  updateMetadata: (metadata: Metadata) => void;
   leave(): void;
 }
 

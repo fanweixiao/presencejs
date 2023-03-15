@@ -12,10 +12,11 @@ const id = Math.random().toString();
 const avatar = Math.random() > 0.5 ? `https://robohash.org/${id}` : void 0;
 const randomName = faker.name.fullName();
 const presence = createPresence({
-  url: 'https://prscd2.allegro.earth/v1',
+  url: (import.meta as any).env.NEXT_PUBLIC_PRESENCE_URL,
   publicKey: (import.meta as any).env.VITE_PUBLIC_KEY,
   id,
   appId: (import.meta as any).env.VITE_APP_ID,
+  debug: true,
 });
 
 const App = () => {

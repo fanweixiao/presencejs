@@ -73,5 +73,6 @@
   "bugs": {
     "url": "https://github.com/yomorun/presencejs/issues"
   },
-  "homepage": "https://github.com/yomorun/presencejs#readme"
+  "homepage": "https://github.com/yomorun/presencejs#readme",
+  "dependencies": {}
 }
