@@ -129,8 +129,6 @@ see [prscd](./prscd)
 - `subscribe`: observe events indicated
 - `leave`: leave from a `Channel`
 
-### Channel
-
 ## 👩🏼‍🔬 Development
 
 - frontend project: `pnpm i`
