@@ -112,7 +112,7 @@ const unsubscribe = channel.subscribe(
 
 ### 2. Start `prscd` backend service
 
-see `prscd`
+see [prscd](./prscd)
 
 ## 🤹🏻‍♀️ API
 
@@ -128,6 +128,11 @@ see `prscd`
 - `leave`: leave from a `Channel`
 
 ### Channel
+
+## 👩🏼‍🔬 Development
+
+- frontend project: `pnpm i`
+- local backend server: [see prscd](./prscd)
 
 ## 🏡 Self-managed hosting
 
