@@ -24,14 +24,14 @@ Key Features:
 
 ## 🌟 Showcase
 
-Some React Serverless Components built with `presencejs`:
+These React Serverless Components are built with `presencejs`:
 
-- GroupHug
-  - Preview: 
-  - Source code: 
-- LiveCursor
-  - Preview: 
-  - Source code: 
+### 👯‍♀️ GroupHug
+
+<img width="800" alt="image" src="https://user-images.githubusercontent.com/65603/225336005-56f3605e-a150-4c9a-891c-fc5f51f46c5c.png">
+
+- Preview: https://allegrocloud.io/preview/clewfjysp0008osvwuina6qnf
+- Source code: [components/react/grouphug-react](./components/react/group-hug)
 
 ## 🥷🏼 Quick Start
 
@@ -40,28 +40,28 @@ Some React Serverless Components built with `presencejs`:
 Using npm
 
 ```
-$ npm i --save @yomo/presencejs
+$ npm i --save @yomo/presence
 ```
 
 Using yarn
 
 ```
-$ yarn add @yomo/presencejs
+$ yarn add @yomo/presence
 ```
 
 Using pnpm
 
 ```
-$ pnpm i @yomo/presencejs
+$ pnpm i @yomo/presence
 ```
 
 #### Create a `Presence` instance
 
 ```js
-import Presence from '@yomo/presencejs';
+import Presence from '@yomo/presence';
 
 // create an instance.
-const yomo = new Presence('https://prsc.yomo.dev', {
+const p = new Presence('https://prsc.yomo.dev', {
     auth: {
         // Certification Type
         type: 'token',
@@ -70,16 +70,45 @@ const yomo = new Presence('https://prsc.yomo.dev', {
     },
 });
 
-yomo.on('connected', () => {
-    console.log('Connected to server: ', yomo.host);
+p.on('connected', () => {
+    console.log('Connected to server: ', p.host);
 });
 ```
 
-#### Broadcast messages to the other peers
+#### Create `Channel`
 
+add subscribe to peers online event:
+
+```js
+const c = p.joinChannel('group-hug', myState);
+
+c.subscribePeers((peers) => {
+    peers.forEach((peer) => {
+      console.log(peer + " is online")
+    }
+});
+```
+
+
+#### Broadcast messages to all peers in this channel
+
+```js
+const cb = () => {
+  const state = document.hidden ? 'away' : 'online';
+  c.broadcast('hidden-state-change', { state });
+};
+document.addEventListener('visibilitychange', cb)
+```
 
 #### Subscribe messages from the other peers
 
+```js
+const unsubscribe = channel.subscribe(
+    'hidden-state-change', 
+    ({ payload, peerState }) => {
+        console.log(`${peerState.id} change visibility to: ${payload}`)
+    })
+```
 
 ### 2. Start `prscd` backend service
 
@@ -87,14 +116,18 @@ see `prscd`
 
 ## 🤹🏻‍♀️ API
 
-| Methods of instance | Description                                                     | Type                                                |
-| ------------------- | --------------------------------------------------------------- | --------------------------------------------------- |
-| `on`                | Function to handle response for given event from server         | `on<T>(event: string, cb: (data: T) => void): void` |
-| `on$`               | Same as the `on` method, returns an observable response         | `on$<T>(event: string): Observable<T>`              |
-| `send`              | Function for sending data to the server                         | `send<T>(event: string, data: T)`                   |
-| `toRoom`            | Enter a room                                                    | `toRoom(roomName: string): Presence`                |
-| `ofRoom`            | Function for sending data streams to the server                 | `ofRoom(roomName: string, event: string)`           |
-| `close`             | A connection to YoMo can be closed once it is no longer needed. | `close(): void`                                     |
+### Presence
+
+- `joinChannel`: return a `Channel` object
+
+### Channel
+
+- `subscribePeers`: observe peers online and offline events.
+- `broadcast`: broadcast events to all other peers.
+- `subscribe`: observe events indicated
+- `leave`: leave from a `Channel`
+
+### Channel
 
 ## 🏡 Self-managed hosting
 
